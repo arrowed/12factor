@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown>
+					<textarea data-template>
+						## The 12 factor app
+				
+						... or some hints to scaling your saas app 
+
+						Cribbed from  [12factor.net](http://12factor.net).
+					</textarea>
+				</section>
+
+				<section>
+					<h2>About your host</h2>
+					<p>
+					Meet Simon D'Alton<br/>	
+					Ioof'er for 18 months<br/>
+					Previously architecht & technical manager somewhere at dxc.technology<br/>
+					</p>   
+					 
+					<aside class="notes">
+						Not related to John.
+						ioof are always looking for smart and passionate people
+					</aside>
+				</section>
+
+				<section>
+					<h2>Whats it all about?</h2>
+					<p>
+						<ul>
+							<li>Minimising surprises</li>
+							<li>Maximising isolation and portability</li>
+							<li>Enable scaling</li>
+							<li>Stopping snowflakes from forming</li>
+							<li>Fairly microservice oriented</li>
+						</ul>
+					</p>
+					<aside>~310 docker containers, ~12 concurrent development teams, xx </aside>
+				</section>
+
+				<section>
+					<h2>1: Codebases</h2>
+					<ul>
+						<li>1 applicaton = 1 codebase</li>
+						<li>1 codebase is deployed to many environments</li>
+						<li>Promote versions through the environments</li>
+						<li>Extract common functions to libraries</li>
+					</ul>
+					<aside>We have put a lot of work into establishing base layers of our apps</aside>
+				</section>
+
+				<section>
+					<h2>2: Dependencies</h2>
+					<ul>
+						<li>Be explicit</li>
+						<li>Dont rely on operating system packages</li>
+						<li>One method of installing your dependencies</li>
+					</ul>
+					<aside>Whats your 'patch day' look like? Has it broken your app?</aside>
+					<aside>Use established tools, maven/npm/pypi/rubygems</aside>
+					<aside>What does a new developer need to start work?</aside>
+					<aside>How confident are you that your app will run out of the box?</aside>
+					<aside>There will be some top level dependencies such as language runtimes, but keep it simple</aside>
+				</section>
+
+				<section>
+					<h2>3: Configuration</h2>
+					Environment settings/variables stored outside of source control
+					<ul>
+						<li>Usernames, passwords</li>
+						<li>Connection strings/resource identifiers</li>
+						<li>Instance specific identifiers</li>
+						<li>Independent of each other</li>
+					</ul>
+					
+					
+					<aside>Could you open source your code without fear of leaked secrets?</aside>
+					<aside>Things that dont vary from environment to environment can be handled in code- di config/other constants</aside>
+					<aside>The 12factor authors like environment variables, whatever works for you. Could be 
+						pulled/pushed in at runtime or deploytime,
+						from a database or other config management system
+						Self discovery and self documenting configuration goes a long way. Who knew that the url had to end in a / anyway?
+					</aside>
+					<aside>Limit the _kinds_ of environments, it'll simplify</aside>
+				</section>
+
+				<section>
+					<h2>4: Backing services are resources</h2>
+					<ul>
+						<li>All backing services treated equally</li>
+					</ul>
+					<aside>Extension of the configuration idea, but promoting the resource-as-a-parameter </aside>
+					<aside>Can you change your database server without a code change</aside>
+				</section>
+
+				<section>
+					<h2>5: Separate build, release and deploy</h2>
+
+					Build it
+						Get your dependencies
+						Compile it
+						Run your tests
+						Identify a version number
+						Produce an artifact
+
+					Deploy it
+						Add the config to your artifact and put it somewhere
+						Have a release identifier; timestamp, environment key+version 
+						Immutable. Change of config = new deploy.
+
+					Run it
+						aka Step 3: Profit
+
+				</section>
+
+
+				
+
+<section>
+	<h2></h2>
+</section>
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
