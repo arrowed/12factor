@@ -59,7 +59,7 @@
 							<li>Fairly microservice oriented</li>
 						</ul>
 					</p>
-					<aside>~310 docker containers, ~12 concurrent development teams, xx </aside>
+					<aside class="notes">~310 docker containers, ~12 concurrent development teams, 14 development stacks, staging, demo, and production environments, with 4,500 releases </aside>
 				</section>
 
 				<section>
@@ -70,7 +70,7 @@
 						<li>Promote versions through the environments</li>
 						<li>Extract common functions to libraries</li>
 					</ul>
-					<aside>We have put a lot of work into establishing base layers of our apps</aside>
+					<aside class="notes">We have put a lot of work into establishing base layers of our apps</aside>
 				</section>
 
 				<section>
@@ -80,11 +80,13 @@
 						<li>Dont rely on operating system packages</li>
 						<li>One method of installing your dependencies</li>
 					</ul>
-					<aside>Whats your 'patch day' look like? Has it broken your app?</aside>
-					<aside>Use established tools, maven/npm/pypi/rubygems</aside>
-					<aside>What does a new developer need to start work?</aside>
-					<aside>How confident are you that your app will run out of the box?</aside>
-					<aside>There will be some top level dependencies such as language runtimes, but keep it simple</aside>
+					<aside class="notes">
+						<p>Whats your 'patch day' look like? Has it broken your app?</p>
+						<p>Use established tools, maven/npm/pypi/rubygems</p>
+						<p>What does a new developer need to start work?</p>
+						<p>How confident are you that your app will run out of the box?</p>
+						<p>There will be some top level dependencies such as language runtimes, but keep it simple</p>
+					</aside>
 				</section>
 
 				<section>
@@ -97,15 +99,16 @@
 						<li>Independent of each other</li>
 					</ul>
 					
-					
-					<aside>Could you open source your code without fear of leaked secrets?</aside>
-					<aside>Things that dont vary from environment to environment can be handled in code- di config/other constants</aside>
-					<aside>The 12factor authors like environment variables, whatever works for you. Could be 
-						pulled/pushed in at runtime or deploytime,
-						from a database or other config management system
-						Self discovery and self documenting configuration goes a long way. Who knew that the url had to end in a / anyway?
+					<aside class="notes">
+						<p>Could you open source your code without fear of leaked secrets?</p>
+						<p>Things that dont vary from environment to environment can be handled in code- di config/other constants</p>
+						<p>The 12factor authors like environment variables, whatever works for you. Could be 
+							pulled/pushed in at runtime or deploytime,
+							from a database or other config management system
+							Self discovery and self documenting configuration goes a long way. Who knew that the url had to end in a / anyway?
+						</p>
+						<p>Limit the _kinds_ of environments, it'll simplify</aside>
 					</aside>
-					<aside>Limit the _kinds_ of environments, it'll simplify</aside>
 				</section>
 
 				<section>
@@ -113,37 +116,200 @@
 					<ul>
 						<li>All backing services treated equally</li>
 					</ul>
-					<aside>Extension of the configuration idea, but promoting the resource-as-a-parameter </aside>
-					<aside>Can you change your database server without a code change</aside>
+
+					<aside class="notes">
+						<p>Extension of the configuration idea, but promoting the resource-as-a-parameter </p>
+						<p>Can you change your database server without a code change</p>
+					</aside>
 				</section>
 
 				<section>
-					<h2>5: Separate build, release and deploy</h2>
+					<h2>5: Separate your pipeline build, release and deploy</h2>
+					<ul>
+						<li>Build it</li>
+						
+						<li>Release it</li>
+						<ol>
+							<li>Combine your config with your artifact</li>
+							<li>Improve your version number to a release identifier</li>
+						</ol>
 
-					Build it
-						Get your dependencies
-						Compile it
-						Run your tests
-						Identify a version number
-						Produce an artifact
+						<li>Deploy it</li>
 
-					Deploy it
-						Add the config to your artifact and put it somewhere
-						Have a release identifier; timestamp, environment key+version 
-						Immutable. Change of config = new deploy.
+					</ul>	
 
-					Run it
-						aka Step 3: Profit
+					<aside class="notes">Build
+						<ol>
+							<li>Get your dependencies</li>
+							<li>Compile it</li>
+							<li>Run your tests</li>
+							<li>Identify a version number</li>
+							<li>Produce an artifact</li>
+						</ol>
 
+						<p>Your release number may be a container identifier, config hash/version, deploy timestamp, environment key+version</p>
+						<p>Your release identifier needs to be Immutable</p>
+						<p>Deployment should be simple. See coming slides</p>
+					</aside>
 				</section>
 
+				<section>
+					<h2>6: Keep it stateless</h2>
 
+					<ol>
+						<li>All your data lives in backing services</li>
+						<li>If you need it, dont assume its existence for any subsequent process.</li>
+						<li>May limit scalability options</li>
+						<li>Sticky sessions</li>
+					</ol>
+					<aside class="notes">
+						<p>
+							Sticky sessions hold session data in ram/local storage and rely on</p>
+						<p>
+							subsequent requests to be processed on the same instance.  
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>7: Port binding</h2>
+					<ul>
+						<li>Expose your service on a port</li>
+						<li>Be self contained and run anywhere</li>
+						<li>Become the backing service for something else</li>
+						<li>Utilise routing and registration/service discovery</li>
+					</ul>
+					<aside class="notes">Service registration occurs during deployment</aside>
+				</section>
+
+				<section>
+					<h2>8: Concurrency</h2>
+					<ul>
+						<li>Drawn from the unix process model</li>
+						<li>Can still have your own internal threadpools</li>
+						<li>Allows for horizontal scaling inside a server resource</li>
+						<li>Take advantage of existing mechanisms for fault control and resilience</li>
+					</ul>
+					
+					<aside class="notes">
+						<p>May have some haters on this, but this is where the effort starts to pay off</p>
+						<p>Dont have to run instance per app, can share load to </p>
+						<p>This is something IOOF takes advantage of. Heavy services are spread evenly over extra capacity nodes </p>
+						<p>Dont build your own reliability controls. Harder to scale, get right and housekeep</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>9: Ebrace disposability</h2>
+					<ul>
+						<li>Start quickly</li>
+						<li>Stop cleanly and gracefully</li>
+						<li>Fail fast</li>
+						<li>
+							Be robust
+							<ol>
+								<li>use job queuing (be reentrant)</li>
+								<li>use retrys (be idempotent)</li>
+							</ol>
+						</li>
+					</ul>
+
+					<aside class="notes">
+						<p>Fast to boot means quick to respond to scaling requests, config changes</p>
+						<p>Longer between starts means other services may need longer timeouts/retry intervals</p>
+						<p>Stop taking requests when shutting down, whist finishing current committed workload</p>
+						<p>Being disposable means you can move your app in a production setting without consequence 
+							(ie start new instance, update registration, and decommission old. you can because you arent relying on anything)  
+						</p>
+						<p>what if the os shuts down mid process?</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>10: Dev/Prod parity</h2>
+					<ol>
+						<li>
+							Continually deploy
+							<ul>
+								<li>Keep development and prod as close as possible.</li>
+								<li>More frequently the releases, the smaller and easier they become.</li>
+							</ul>
+						</li>
+						<li>
+							Backing service similarity
+							<ul>
+								<li>Dont rely on a feature that isnt in production</li>
+								<li>At least keep parity in testing environments</li>
+							</ul>
+						</li>
+					</ol>
+
+
+					<aside class="notes">
+						<li>Release frequently. Stop living in the past.</li>
+						<li>More release iteratons == resilience</li>
+						<li>Dont have to learn 2 things</li>	
+						<li>Hit by a truck</li>
+						<li>Parity can be in violation of 2: dependencies, ie hard to setup a local mongo cluster</li>
+						<li>Will always be some gap, ie dont run on production hardware in development</li>
+					</aside>
+				</section>
+
+				<section>
+					<h2>11: Logs are streams</h2>
+					<ul>
+						<li>Limit your use of local os resources (files)</li>
+						<li>Let something eat your logs/event stream</li>
+						<li>Limit your housekeeping</li>
+					</ul>
+
+					<aside class="notes">What if you have two instances of an app running to spread load, on the same server resource?
+						</aside>
+						<aside class="notes">
+							enables centralisation of log streams for 
+							* fast diagnosis
+							* trend analysis / graphing/dashboarding later on
+							* non naive app alerting
+						</aside>
+				</section>
+
+				<section>
+					<h2>12: Management tasks are one off tasks</h2>
+					<ul>
+						<li>Running db migrations on app startup is slow</li>
+						<li>Baking in one off things into apps may mean dead/stale code persists</li>
+					</ul>
+					
+					<aside class="notes">Can get race conditions when starting instances</aside>
+					<aside class="notes">
+						<ul>
+						<li>IOOF dont do great at this, but we are getting better. </li>	
+						<li>Complex migrations (applying fee upgrades) will be done as a separate app allowing for
+							 development iteration and promotion through our release process </li>
+						<li>Only a handful of people have backing data store access (relational/document databases) and traceability is important.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<h2>and we are done</h2>
+					What can you do to your app to make it 
+					<ul>
+						<li>More scalable</li>
+						<li>Easier to work with</li>
+						<li>Faster to iterate</li>
+					</ul>
+
+					<p>?</p>
+				</section>
+			
+
+				<section>
+					<h2>ioof arent hiring</h2>
+					<p>But dont let that stop you </p>
+					<p>Passion and persitence are good qualities</p>
+				</section>
 				
-
-<section>
-	<h2></h2>
-</section>
-
 			</div>
 		</div>
 
